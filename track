@@ -1,0 +1,70 @@
+public class BeadTracker {
+    // main method bead tracker
+    public static void main(String[] args) {
+ 
+        // command line arguments
+ 
+        int min = Integer.parseInt(args[0]);
+        double tau = Double.parseDouble(args[1]);
+        double delta = Double.parseDouble(args[2]);
+ 
+        // to make sure that it starts from the right index
+        // an array of filenames
+        String[] filename = new String[args.length - 3];
+ 
+        // loops through each filename
+        for (int i = 0; i < args.length - 3; i++) {
+            filename[i] = args[i + 3];
+        }
+ 
+        //  loops through the length of the filename  - 1 to end with
+        // the right index
+        for (int i = 0; i < filename.length - 1; i++) {
+ 
+            // it defines two consecutive pictures for i and i + 1
+            Picture pic1 = new Picture(filename[i]);
+            Picture pic2 = new Picture(filename[i + 1]);
+ 
+            // calls bead finder to determine the beads in each picture
+            BeadFinder beads1 = new BeadFinder(pic1, tau);
+            BeadFinder beads2 = new BeadFinder(pic2, tau);
+ 
+            // creating a new array for each picture to determine if the beads
+            // are bigger than min number of pixels required (white)
+            Blob[] arrayOne = beads1.getBeads(min);
+            Blob[] arrayTwo = beads2.getBeads(min);
+ 
+            // initialize distance to find it between the two beads
+            double distance;
+ 
+            // loops through each array of beads
+            for (int k = 0; k < arrayTwo.length; k++) {
+ 
+                // initialize distance 2 to be positive infinity
+                // the goal is to check for the minimum distance required
+                // even in the case if they both are <= delta
+                double distance2 = Double.POSITIVE_INFINITY;
+ 
+                for (int j = 0; j < arrayOne.length; j++) {
+ 
+                    // gets the distance between the two beads at the same index
+                    distance = arrayTwo[k].distanceTo(arrayOne[j]);
+ 
+                    // checks for minimum distance and then updates
+                    if (distance < distance2) {
+                        distance2 = distance;
+                    }
+ 
+                }
+ 
+                // checks if the distance given <= delta
+                if (distance2 <= delta) {
+ 
+                    // if yes then it prints the minimum distance 
+                    StdOut.println(String.format("%.4f", distance2));
+                }
+            }
+        }
+    }
+}
+ 
