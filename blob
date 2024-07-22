@@ -1,0 +1,68 @@
+public class Blob {
+    private int pixels; // number of pixels or the mass
+    private int sumx; // sum for x
+    private int sumy; //  sum for y
+ 
+ 
+    //  creates an empty blob
+    public Blob() {
+        pixels = 0;
+    }
+ 
+ 
+    //  adds pixel (x, y) to this blob
+    public void add(int x, int y) {
+        pixels++;
+        sumx += x;
+        sumy += y;
+    }
+ 
+ 
+    //  number of pixels added to this blob
+    public int mass() {
+        return pixels;
+    }
+ 
+    //  Euclidean distance between the center of masses of the two blobs
+    public double distanceTo(Blob that) {
+        if (this.pixels == 0 || that.pixels == 0) {
+            return Double.NaN;
+        }
+        double cx = (double) this.sumx / this.pixels;
+        double x1 = (double) that.sumx / that.pixels;
+ 
+        double cy = (double) this.sumy / this.pixels;
+        double y1 = (double) that.sumy / that.pixels;
+ 
+        double xpower = Math.pow(x1 - cx, 2);
+        double ypower = Math.pow(y1 - cy, 2);
+        return Math.sqrt(xpower + ypower);
+    }
+ 
+    //  string representation of this blob (see below)
+    public String toString() {
+        if (pixels == 0) {
+            return "0 (NaN, NaN)";
+        }
+ 
+        return String.format("%2d (%8.4f, %8.4f)", pixels, (double) sumx / pixels,
+                             (double) sumy / pixels);
+    }
+ 
+    //  tests this class by directly calling all instance methods
+    public static void main(String[] args) {
+        Blob a = new Blob();
+        a.add(1, 4);
+        a.add(2, 6);
+ 
+        Blob b = new Blob();
+        b.add(3, 7);
+        b.add(8, 9);
+ 
+        System.out.println(a.distanceTo(b));
+        System.out.println(a.toString());
+        System.out.println(b.mass());
+ 
+    }
+}
+ 
