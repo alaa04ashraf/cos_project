@@ -1,0 +1,45 @@
+public class Avogadro {
+ 
+    // main method to calculate boltzmann and avogadro constants
+    public static void main(String[] args) {
+ 
+        // defining physical variables
+        double delta = 0.5;
+        double meters = 0.175e-6;
+        double temperature = 297;
+        double viscosity = 9.135e-4;
+        double radius = 0.5e-6;
+        double gas = 8.31446;
+        double displacement = 0;
+ 
+        // initializing a counter
+        int counter = 0;
+        while (!StdIn.isEmpty()) {
+            // defining the displacement of r in pixels
+            double rdisplacement = StdIn.readDouble();
+ 
+            // converting it to meters and storing it in another variable
+            double r2displacement = rdisplacement * meters;
+            displacement += Math.pow(r2displacement, 2);
+ 
+            // incrementing to access all the values
+            counter++;
+        }
+ 
+        // writing the equations for variance and D (diffusion)
+        double variance = displacement / (2 * counter);
+        double diffusion = variance / (2 * delta);
+ 
+        // defining the equation for Boltzmann constant (K)
+        double boltzmann = (6 * Math.PI * diffusion * viscosity * radius)
+                / temperature;
+ 
+        // defining the equation for avogadro constant
+        double avogardo = gas / boltzmann;
+ 
+        // printing the value of the constants.
+        System.out.printf("Boltzmann =   %11.4e \n", boltzmann);
+        System.out.printf("Avogadro =   %11.4e \n", avogardo);
+ 
+    }
+}
