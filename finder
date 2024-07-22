@@ -1,0 +1,142 @@
+import java.util.ArrayList;
+ 
+// starts a method
+public class BeadFinder {
+ 
+ 
+    private boolean[][] marked; // array of marked spots
+    private double tau; // tau value
+    private ArrayList<Blob> blobs; // arraylist of blobs
+    private Picture picture; // picture
+ 
+ 
+    //  finds all blobs in the specified picture using luminance threshold tau
+    public BeadFinder(Picture picture, double tau) {
+ 
+        // initializing the instance variables
+        this.picture = new Picture(picture);
+        int height = picture.height();
+        int width = picture.width();
+        marked = new boolean[width][height];
+        this.tau = tau;
+        blobs = new ArrayList<>();
+ 
+        // looping through the picture
+ 
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+ 
+                // checking if the pixel has not been marked to continue
+                if (!marked[i][j]) {
+ 
+                    //  luminance equation
+                    double luminance = Luminance.intensity(picture.get(i, j));
+ 
+                    // checking the condition for lum >= tau to ge the beads
+                    if (luminance >= tau) {
+ 
+                        // if yes then create a new blob and increment
+                        Blob a = new Blob();
+                        blobs.add(a);
+                        // use dfs
+                        dfs(a, i, j);
+                    }
+ 
+ 
+                }
+ 
+            }
+        }
+    }
+ 
+ 
+    // identifying the dfs
+    private void dfs(Blob a, int x, int y) {
+ 
+        // Fill every site reachable from (i, j).
+ 
+        // checks for boundary conditions and if the pixel marked
+        // to return nothing
+        if (x < 0 || x >= picture.width()) return;
+        if (y < 0 || y >= picture.height()) return;
+        if (marked[x][y]) return;
+ 
+        // mark the pixel and then check lum
+        marked[x][y] = true;
+ 
+        double luminance = Luminance.intensity(picture.get(x, y));
+        if (luminance < tau) return;
+        if (luminance >= tau) { // if lum is >= tau
+ 
+            // increment and identify the neighbors
+            a.add(x, y);
+            dfs(a, x + 1, y); // Down.
+            dfs(a, x, y + 1); // Right.
+            dfs(a, x, y - 1); // Left.
+            dfs(a, x - 1, y); // Up.
+        }
+    }
+ 
+    // instance method to count the number of beads
+    private int countBeads(int min) {
+ 
+        // counter initialized
+        int counter = 0;
+ 
+        // loop through each blob
+        for (Blob a : blobs) {
+ 
+            // if the mass of the blob >= min increment and go the next
+            if (a.mass() >= min) {
+                counter++;
+            }
+        }
+ 
+        // return the counter which represents the number of blobs satisfied
+        return counter;
+    }
+ 
+    //  returns all beads (blobs with >= min pixels)
+    public Blob[] getBeads(int min) {
+ 
+        // counter is the number of beads satisfied the condition for min
+        int counter = countBeads(min);
+ 
+        // creating an array of counter
+        Blob[] size = new Blob[counter];
+ 
+        // counter method
+        int number = 0;
+ 
+        // goes through each bead and get its value
+        for (int i = 0; i < blobs.size(); i++) {
+            Blob blob = blobs.get(i);
+            // increments and returns size
+            if (blob.mass() >= min) {
+                size[number] = blob;
+                number++;
+            }
+        }
+        return size;
+    }
+ 
+    //  test client, as described below
+    public static void main(String[] args) {
+ 
+        // command line arguments
+        int min = Integer.parseInt(args[0]);
+        double tau = Double.parseDouble(args[1]);
+        Picture picture = new Picture(args[2]);
+        BeadFinder beadsfind = new BeadFinder(picture, tau);
+        Blob[] beads = beadsfind.getBeads(min);
+ 
+        // loop through beads array to print the to string cx, cy, etc.
+        for (int i = 0; i < beads.length; i++) {
+            StdOut.println(beads[i].toString());
+        }
+ 
+    }
+ 
+ 
+}
+ 
